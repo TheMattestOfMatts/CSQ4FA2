@@ -3,47 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Lunch Pre-Order Form</title>
 </head>
 <body>
     <h2>Order Form</h2>
+
     <!-- Order form where user inputs details -->
     <form onsubmit="return printReceipt();">
-        <!-- Input for full name -->
-        <label for="fullName">Full Name:</label>
-        <input type="text" id="fullName" name="fullName" required><br>
         
-        <!-- Input for grade and section -->
+        <!-- Input for student's full name -->
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" required><br><br>
+
+        <!-- Input for student's grade and section -->
         <label for="gradeSection">Grade & Section:</label>
         <input type="text" id="gradeSection" name="gradeSection" required><br><br>
-        
+
         <!-- Dropdown menu for food selection -->
         <label for="food">Food:</label>
         <select id="food" name="food">
-            <option value="chicken">Chicken meal (PHP 75)</option>
-            <option value="pork">Pork meal (PHP 85)</option>
-            <option value="beef">Beef meal (PHP 105)</option>
-        </select><br>
-        
-        <!-- Input for quantity with limits -->
-        <label for="quantity">Quantity (Max of 5):</label>
-        <input type="number" id="quantity" name="quantity" min="1" max="5"><br><br>
-        
+            <option value="chicken">Chicken meal</option>
+            <option value="pork">Pork meal</option>
+            <option value="beef">Beef meal</option>
+        </select><br><br>
+
+        <!-- Input for quantity with minimum and maximum values -->
+        <label for="quantity">Quantity (1-5):</label>
+        <input type="number" id="quantity" name="quantity" min="1" max="5" required><br><br>
+
         <!-- Dropdown menu for customer type -->
         <label for="customerType">Customer Type:</label>
         <select id="customerType" name="customerType">
             <option value="student">Student</option>
             <option value="employee">Faculty/Staff</option>
         </select><br><br>
-        
+
         <!-- Submit button -->
         <input type="submit" value="Place Order">
     </form>
 
+    <hr>
+
+    <!-- This is where the order summary will appear -->
+    <div id="receipt"></div>
+
     <script>
         // Function to calculate subtotal based on food choice and quantity
-        function calculateSubtotal(order, quantity){
-            switch(order){
+        function calculateSubtotal(order, quantity) {
+            switch (order) {
                 case "chicken":
                     return 75 * quantity;
                 case "pork":
@@ -55,32 +62,33 @@
             }
         }
 
-        // Function to calculate discount (20% for students, 0 for faculty/staff)
-        function calculateDiscount(total, custType){
-            if(custType === "student"){
+        // Function to calculate discount based on customer type
+        // Students get 20% discount, Faculty/Staff get no discount
+        function calculateDiscount(total, custType) {
+            if (custType === "student") {
                 return total * 0.20;
             } else {
                 return 0;
             }
         }
 
-        // Main function to print receipt when form is submitted
-        function printReceipt(){
-            // Collect input values from form
+        // Main function that runs when the form is submitted
+        function printReceipt() {
+            // Collect input values from the form
             let name = document.getElementById("fullName").value;
             let grade = document.getElementById("gradeSection").value;
             let food = document.getElementById("food").value;
             let quantity = parseInt(document.getElementById("quantity").value);
             let customerType = document.getElementById("customerType").value;
 
-            // Calculate subtotal, discount, and total
+            // Calculate subtotal, discount, and final total
             let subtotal = calculateSubtotal(food, quantity);
             let discount = calculateDiscount(subtotal, customerType);
             let total = subtotal - discount;
 
-            // Convert food value into readable name with price
+            // Convert food value into readable meal name with price
             let foodName = "";
-            switch(food){
+            switch (food) {
                 case "chicken":
                     foodName = "Chicken meal (PHP 75)";
                     break;
@@ -94,18 +102,19 @@
                     foodName = "Item not found";
             }
 
-            // Display receipt details on the page
-            document.write("<h2>ORDER SUMMARY</h2>");
-            document.write("Name: " + name + "<br>");
-            document.write("Grade & Section: " + grade + "<br>");
-            document.write("Order: " + foodName + "<br>");
-            document.write("Quantity: " + quantity + "<br>");
-            document.write("Subtotal: PHP " + subtotal + "<br>");
-            document.write("Discount: PHP " + discount + "<br>");
-            document.write("Total: PHP " + total + "<br>");
-            document.write("Thank you for your patronage!")
+            // Display order summary on the webpage using innerHTML
+            document.getElementById("receipt").innerHTML =
+                "<h2>ORDER SUMMARY</h2>" +
+                "<p>Name: " + name + "</p>" +
+                "<p>Grade & Section: " + grade + "</p>" +
+                "<p>Order: " + foodName + "</p>" +
+                "<p>Quantity: " + quantity + "</p>" +
+                "<p>Subtotal: PHP " + subtotal + "</p>" +
+                "<p>Discount: PHP " + discount + "</p>" +
+                "<p>Total: PHP " + total + "</p>" +
+                "<p>Thank you for your patronage!</p>";
 
-            // Prevents page reload after form submission
+            // Prevent page reload after form submission
             return false;
         }
     </script>
